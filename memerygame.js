@@ -108,24 +108,60 @@ function showWinMessage() {
 
   setTimeout(() => {
     const playerName = prompt("Enter your name for the leaderboard:");
-    if (playerName) saveToLeaderboard(playerName, score, time);
-    displayLeaderboard();
+    if (playerName) {
+      saveToLeaderboard(playerName, score, time, () => {
+        win.classList.remove("show");
+      });
+    }
   }, 1000);
 }
 
-function saveToLeaderboard(name, score, time) {
-  const leaderboard = JSON.parse(localStorage.getItem("meryLegendsLeaderboard") || "[]");
-  leaderboard.push({ name, score, time });
-  leaderboard.sort((a, b) => b.score - a.score || a.time - b.time);
-  localStorage.setItem("meryLegendsLeaderboard", JSON.stringify(leaderboard.slice(0, 10)));
+function sanitizeHTML(str) {
+  const temp = document.createElement('div');
+  temp.textContent = str;
+  return temp.innerHTML;
+}
+
+function saveToLeaderboard(name, score, time, onSave) {
+  const leaderboardRef = database.ref('leaderboard');
+  const newEntry = {
+    name: sanitizeHTML(name),
+    score: score,
+    time: time
+  };
+  leaderboardRef.push(newEntry)
+    .then(() => {
+      console.log("Score saved successfully!");
+      if (onSave) onSave();
+    })
+    .catch((error) => {
+      console.error("Error saving score: ", error);
+      alert("There was an error saving your score. Please try again.");
+    });
 }
 
 function displayLeaderboard() {
-  const leaderboard = JSON.parse(localStorage.getItem("meryLegendsLeaderboard") || "[]");
+  const leaderboardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
   const tbody = document.getElementById("leaderboard-body");
-  tbody.innerHTML = leaderboard
-    .map(entry => `<tr><td>${entry.name}</td><td>${entry.score}</td><td>${entry.time}s</td></tr>`)
-    .join("");
+
+  leaderboardRef.on('value', (snapshot) => {
+    let entries = [];
+    snapshot.forEach((childSnapshot) => {
+      entries.push(childSnapshot.val());
+    });
+    
+    // Sort descending by score, then ascending by time
+    entries.sort((a, b) => b.score - a.score || a.time - b.time);
+
+    let html = "";
+    entries.forEach((entry) => {
+      html += `<tr><td>${sanitizeHTML(entry.name)}</td><td>${entry.score}</td><td>${entry.time}s</td></tr>`;
+    });
+    tbody.innerHTML = html;
+  }, (error) => {
+    console.error("Error getting leaderboard: ", error);
+    tbody.innerHTML = "<tr><td colspan='3'>Error loading leaderboard.</td></tr>";
+  });
 }
 
 displayLeaderboard();
