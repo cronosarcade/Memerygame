@@ -139,12 +139,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebas
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD-YvTCquhpbl6j1TwTsDz5hnMPnyU3ukI",
+  authDomain: "memery-game-4f732.firebaseapp.com",
+  databaseURL: "https://memery-game-4f732-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "memery-game-4f732",
+  storageBucket: "memery-game-4f732.firebasestorage.app",
+  messagingSenderId: "957328543425",
+  appId: "1:957328543425:web:d48bc4323bd309e0858e40",
+  measurementId: "G-LXMZ5FHV05"
 };
 
 const app = initializeApp(firebaseConfig);
