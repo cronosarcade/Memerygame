@@ -22,11 +22,12 @@
   <button onclick="location.href='index.html'">Main Menu</button>
 </div>
 
-<div id="win-message">
-  🎉 You Won! 🎉
+<div id="game"></div>
+
+<div id="win-message" class="overlay">
+  <h2>🎉 You Win! 🎉</h2>
   <p id="final-score"></p>
-  <input type="text" id="playerName" placeholder="Enter your name" />
-  <button onclick="initGame()">Play Again</button>
+  <button id="play-again">Play Again</button>
 </div>
 
 <div id="leaderboard">
