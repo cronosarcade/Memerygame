@@ -1,3 +1,4 @@
+// ------------------ IMAGE & GAME SETUP ------------------
 const imageUrls = [
   "https://ipfs.ebisusbay.com/ipfs/QmZBWAGEPVydd3WKJKJvdesKjMC85Hf1Yod4VJCBvydW1R",
   "https://ipfs.ebisusbay.com/ipfs/QmSxg9ACBP4EEyda5QbU4usJYxRVDHj8GZQokcwUd8CnNt",
@@ -99,6 +100,14 @@ function checkMatch() {
   lockBoard = false;
 }
 
+// ------------------ RANDOM NAME GENERATOR ------------------
+function generateRandomName() {
+  const prefixes = ["Ghost", "Cro", "Anon", "Mery", "Legend"];
+  const suffix = Math.floor(1000 + Math.random() * 9000);
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  return `${prefix}_${suffix}`;
+}
+
 // ------------------ WIN SCREEN ------------------
 function showWinMessage() {
   clearInterval(timerInterval);
@@ -108,8 +117,8 @@ function showWinMessage() {
   finalScore.textContent = `Final Score: ${score} | Time: ${time}s`;
 
   setTimeout(() => {
-    const playerName = prompt("Enter your name for the leaderboard:");
-    if (playerName) saveScore(playerName, score, time);
+    const playerName = prompt("Enter your name for the leaderboard:") || generateRandomName();
+    saveScore(playerName, score, time);
   }, 1000);
 }
 
@@ -130,7 +139,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Save player score to Firestore
 async function saveScore(player, score, time) {
   try {
     await addDoc(collection(db, "memeryLeaderboard"), {
@@ -139,7 +147,7 @@ async function saveScore(player, score, time) {
       time: Number(time),
       date: new Date()
     });
-    alert("Score saved successfully!");
+    alert(`Score saved! 🏆 Nice work, ${player}!`);
     loadLeaderboard();
   } catch (e) {
     console.error("Error saving score:", e);
@@ -147,7 +155,6 @@ async function saveScore(player, score, time) {
   }
 }
 
-// Load top 10 scores from Firestore
 async function loadLeaderboard() {
   const q = query(collection(db, "memeryLeaderboard"), orderBy("score", "desc"), limit(10));
   const snapshot = await getDocs(q);
@@ -160,139 +167,7 @@ async function loadLeaderboard() {
   });
 }
 
-// Load leaderboard when page is ready
-window.addEventListener("DOMContentLoaded", loadLeaderboard);
-
-// ------------------ GAME INIT ------------------
-initGame();  score = 0;
-  time = 0;
-  document.getElementById("score").textContent = score;
-  document.getElementById("timer").textContent = time;
-  clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    time++;
-    document.getElementById("timer").textContent = time;
-  }, 1000);
-
-  const cards = [...imageUrls, ...imageUrls].sort(() => 0.5 - Math.random());
-
-  cards.forEach(url => {
-    const card = document.createElement("div");
-    card.classList.add("card");
-    card.dataset.image = url;
-
-    const front = document.createElement("div");
-    front.classList.add("front");
-    const frontImg = document.createElement("img");
-    frontImg.src = frontImage;
-    front.appendChild(frontImg);
-
-    const back = document.createElement("div");
-    back.classList.add("back");
-    const img = document.createElement("img");
-    img.src = url;
-    back.appendChild(img);
-
-    card.appendChild(front);
-    card.appendChild(back);
-    card.addEventListener("click", () => flipCard(card));
-    game.appendChild(card);
-  });
-}
-
-function flipCard(card) {
-  if (lockBoard || card.classList.contains("flipped")) return;
-  card.classList.add("flipped");
-  playFlipSound();
-  flippedCards.push(card);
-
-  if (flippedCards.length === 2) {
-    lockBoard = true;
-    setTimeout(checkMatch, 700);
-  }
-}
-
-function checkMatch() {
-  const [first, second] = flippedCards;
-  if (first.dataset.image === second.dataset.image) {
-    matchedCount++;
-    score += 5;
-    document.getElementById("score").textContent = score;
-    if (matchedCount === 8) showWinMessage();
-  } else {
-    score -= 1;
-    document.getElementById("score").textContent = score;
-    first.classList.remove("flipped");
-    second.classList.remove("flipped");
-  }
-  flippedCards = [];
-  lockBoard = false;
-}
-
-function showWinMessage() {
-  clearInterval(timerInterval);
-  const win = document.getElementById("win-message");
-  const finalScore = document.getElementById("final-score");
-  win.classList.add("show");
-  finalScore.textContent = `Final Score: ${score} | Time: ${time}s`;
-
-  setTimeout(() => {
-    const playerName = prompt("Enter your name for the leaderboard:");
-    if (playerName) {
-      saveToLeaderboard(playerName, score, time, () => {
-        win.classList.remove("show");
-      });
-    }
-  }, 1000);
-}
-
-function sanitizeHTML(str) {
-  const temp = document.createElement('div');
-  temp.textContent = str;
-  return temp.innerHTML;
-}
-
-function saveToLeaderboard(name, score, time, onSave) {
-  const leaderboardRef = database.ref('leaderboard');
-  const newEntry = {
-    name: sanitizeHTML(name),
-    score: score,
-    time: time
-  };
-  leaderboardRef.push(newEntry)
-    .then(() => {
-      console.log("Score saved successfully!");
-      if (onSave) onSave();
-    })
-    .catch((error) => {
-      console.error("Error saving score: ", error);
-      alert("There was an error saving your score. Please try again.");
-    });
-}
-
-function displayLeaderboard() {
-  const leaderboardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
-  const tbody = document.getElementById("leaderboard-body");
-
-  leaderboardRef.on('value', (snapshot) => {
-    let entries = [];
-    snapshot.forEach((childSnapshot) => {
-      entries.push(childSnapshot.val());
-    });
-    
-    // Sort descending by score, then ascending by time
-    entries.sort((a, b) => b.score - a.score || a.time - b.time);
-
-    let html = "";
-    entries.forEach((entry) => {
-      html += `<tr><td>${sanitizeHTML(entry.name)}</td><td>${entry.score}</td><td>${entry.time}s</td></tr>`;
-    });
-    tbody.innerHTML = html;
-  }, (error) => {
-    console.error("Error getting leaderboard: ", error);
-    tbody.innerHTML = "<tr><td colspan='3'>Error loading leaderboard.</td></tr>";
-  });
-}
-
-displayLeaderboard();
-initGame();
+window.addEventListener("DOMContentLoaded", () => {
+  loadLeaderboard();
+  initGame(); // ✅ Now starts automatically on page load
+});
