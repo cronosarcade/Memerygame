@@ -4,55 +4,51 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MEMERY GAME</title>
-<link rel="stylesheet" href="memerygame.css">
+<link rel="stylesheet" href="styles/memerygame.css"/>
 </head>
+
 <body>
 <h1>MEMERY GAME</h1>
 
 <div id="scoreboard">
-<div>Score: <span id="score">0</span>
-</div>
-<div>Time: <span id="timer">0</span>s</div>
+  <div>Score: <span id="score">0</span></div>
+  <div>Time: <span id="timer">0</span>s</div>
 </div>
 
-<div id="game">
-</div>
+<div id="game"></div>
 
 <div class="buttons-container">
-<button onclick="initGame()">Restart</button>
-<button onclick="location.href='index.html'">Main Menu</button>
+  <button onclick="initGame()">Restart</button>
+  <button onclick="location.href='index.html'">Main Menu</button>
 </div>
 
 <div id="win-message">
-🎉 You Won! 🎉
-<p id="final-score">
-</p>
-<button onclick="initGame()">Play Again</button>
+  🎉 You Won! 🎉
+  <p id="final-score"></p>
+  <input type="text" id="playerName" placeholder="Enter your name" />
+  <button id="saveScoreBtn">Save Score</button>
+  <button onclick="initGame()">Play Again</button>
 </div>
-
 
 <div id="leaderboard">
-<h2>Top Legends</h2>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Score</th>
-<th>Time</th>
-</tr>
-</thead>
-<tbody id="leaderboard-body">
-</tbody>
-</table>
+  <h2>🏆 Top Legends 🏆</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Score</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard-body"></tbody>
+  </table>
 </div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<!-- Link external JS -->
+<script type="module" src="scripts/game.js"></script>
 
-<!-- Your Firebase Configuration -->
-<script src="firebase.js"></script>
-
+</body>
+</html>
 <!-- Your Game Logic -->
 <script src="memerygame.js"></script>
 
