@@ -20,21 +20,173 @@ let timerInterval;
 
 const flipSound = new Audio("content");
 
+// ------------------ SOUNDS ------------------
 function playFlipSound() {
   const sound = flipSound.cloneNode();
   sound.volume = 0.4;
   sound.play().catch(() => {});
 }
 
+// ------------------ INITIALIZE GAME ------------------
 function initGame() {
   const game = document.getElementById("game");
   const win = document.getElementById("win-message");
+
+  // Reset core state
   game.innerHTML = "";
   win.classList.remove("show");
   flippedCards = [];
   matchedCount = 0;
   lockBoard = false;
   score = 0;
+  time = 0;
+
+  document.getElementById("score").textContent = score;
+  document.getElementById("timer").textContent = time;
+
+  // Clear previous timer if active
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    time++;
+    document.getElementById("timer").textContent = time;
+  }, 1000);
+
+  // Duplicate & shuffle cards
+  const cards = [...imageUrls, ...imageUrls].sort(() => 0.5 - Math.random());
+
+  // Create card elements
+  cards.forEach(url => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.dataset.image = url;
+
+    const front = document.createElement("div");
+    front.classList.add("front");
+    const frontImg = document.createElement("img");
+    frontImg.src = frontImage;
+    front.appendChild(frontImg);
+
+    const back = document.createElement("div");
+    back.classList.add("back");
+    const img = document.createElement("img");
+    img.src = url;
+    back.appendChild(img);
+
+    card.appendChild(front);
+    card.appendChild(back);
+    card.addEventListener("click", () => flipCard(card));
+    game.appendChild(card);
+  });
+}
+
+// ------------------ CARD FLIP LOGIC ------------------
+function flipCard(card) {
+  if (lockBoard || card.classList.contains("flipped")) return;
+  card.classList.add("flipped");
+  playFlipSound();
+  flippedCards.push(card);
+
+  if (flippedCards.length === 2) {
+    lockBoard = true;
+    setTimeout(checkMatch, 700);
+  }
+}
+
+function checkMatch() {
+  const [first, second] = flippedCards;
+  if (first.dataset.image === second.dataset.image) {
+    matchedCount++;
+    score += 5;
+    document.getElementById("score").textContent = score;
+    if (matchedCount === 8) showWinMessage();
+  } else {
+    score -= 1;
+    document.getElementById("score").textContent = score;
+    first.classList.remove("flipped");
+    second.classList.remove("flipped");
+  }
+  flippedCards = [];
+  lockBoard = false;
+}
+
+// ------------------ RANDOM NAME GENERATOR ------------------
+function generateRandomName() {
+  const prefixes = ["Ghost", "Cro", "Anon", "Mery", "Legend"];
+  const suffix = Math.floor(1000 + Math.random() * 9000);
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  return `${prefix}_${suffix}`;
+}
+
+// ------------------ WIN SCREEN ------------------
+function showWinMessage() {
+  clearInterval(timerInterval);
+  const win = document.getElementById("win-message");
+  const finalScore = document.getElementById("final-score");
+  win.classList.add("show");
+  finalScore.textContent = `Final Score: ${score} | Time: ${time}s`;
+
+  setTimeout(() => {
+    const playerName = prompt("Enter your name for the leaderboard:") || generateRandomName();
+    saveScore(playerName, score, time);
+  }, 1000);
+}
+
+// ------------------ PLAY AGAIN BUTTON ------------------
+document.getElementById("play-again").addEventListener("click", () => {
+  const win = document.getElementById("win-message");
+  win.classList.remove("show");
+  initGame(); // restart cleanly
+});
+
+// ------------------ FIREBASE LEADERBOARD ------------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function saveScore(player, score, time) {
+  try {
+    await addDoc(collection(db, "memeryLeaderboard"), {
+      player,
+      score: Number(score),
+      time: Number(time),
+      date: new Date()
+    });
+    alert(`Score saved! 🏆 Nice work, ${player}!`);
+    loadLeaderboard();
+  } catch (e) {
+    console.error("Error saving score:", e);
+    alert("Could not save score — check console for details.");
+  }
+}
+
+async function loadLeaderboard() {
+  const q = query(collection(db, "memeryLeaderboard"), orderBy("score", "desc"), limit(10));
+  const snapshot = await getDocs(q);
+  const tbody = document.getElementById("leaderboard-body");
+  tbody.innerHTML = "";
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const row = `<tr><td>${data.player}</td><td>${data.score}</td><td>${data.time || 0}s</td></tr>`;
+    tbody.innerHTML += row;
+  });
+}
+
+// ------------------ START GAME ------------------
+window.addEventListener("DOMContentLoaded", () => {
+  loadLeaderboard();
+  initGame();
+});  score = 0;
   time = 0;
   document.getElementById("score").textContent = score;
   document.getElementById("timer").textContent = time;
