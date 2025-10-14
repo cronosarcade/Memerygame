@@ -106,29 +106,6 @@ function checkMatch() {
   lockBoard = false;
 }
 
-import { getDatabase, ref, query, orderByChild, limitToLast, onValue } from 'firebase/database';
-
-const db = getDatabase();
-const leaderboardRef = ref(db, 'leaderboard');
-
-// Create a query to get the top 10 scores (assuming higher is better)
-const topScoresQuery = query(leaderboardRef, orderByChild('score'), limitToLast(10));
-
-onValue(topScoresQuery, (snapshot) => {
-  const scores: { name: string; score: number }[] = [];
-  snapshot.forEach((childSnapshot) => {
-    scores.push(childSnapshot.val());
-  });
-
-  // Since limitToLast orders ascending, reverse to show highest scores first
-  const sortedScores = scores.reverse();
-
-  // Now, 'sortedScores' contains your top 10 scores, ready to be displayed
-  console.log("Top Scores:", sortedScores);
-  // Update your Web app's UI here to display these scores
-});
-
-
 // ------------------ RANDOM NAME GENERATOR ------------------
 function generateRandomName() {
   const prefixes = ["Ghost", "Cro", "Anon", "Mery", "Legend"];
