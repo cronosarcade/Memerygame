@@ -48,6 +48,7 @@ h1 {
   grid-gap: 10px;
   perspective: 1000px;
   justify-content: center;
+  margin-bpttom: 0;
 }
 
 /* ------------------ CARDS ------------------ */
