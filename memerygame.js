@@ -197,23 +197,26 @@ function listenToLeaderboard() {
   });
 }
 
-// ------------------ PLAY AGAIN BUTTON FIX 👻 ------------------
+// ------------------ PLAY AGAIN BUTTON FIX ------------------
 document.addEventListener("DOMContentLoaded", () => {
   const playAgainBtn = document.getElementById("play-again");
   const winMessage = document.getElementById("win-message");
 
   if (playAgainBtn && winMessage) {
     playAgainBtn.addEventListener("click", () => {
-      // 👻 Add ghost fade-out animation
+      // Fade out overlay smoothly
       winMessage.style.transition = "opacity 0.6s ease";
       winMessage.style.opacity = "0";
       winMessage.style.pointerEvents = "none";
 
+      // Wait for fade-out then restart game
       setTimeout(() => {
         winMessage.classList.remove("show");
-        initGame();
+        initGame();  // Reset cards, timer, score
       }, 600);
     });
+  }
+});
   }
 
   listenToLeaderboard();
