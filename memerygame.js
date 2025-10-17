@@ -199,12 +199,19 @@ function listenToLeaderboard() {
 
 // ------------------ PLAY AGAIN BUTTON FIX ------------------
 document.addEventListener("DOMContentLoaded", () => {
+  // Start live leaderboard
+  listenToLeaderboard();
+  
+  // Start the game
+  initGame();
+
+  // Play Again button
   const playAgainBtn = document.getElementById("play-again");
   const winMessage = document.getElementById("win-message");
 
   if (playAgainBtn && winMessage) {
     playAgainBtn.addEventListener("click", () => {
-      // Fade out overlay smoothly
+      // Fade out overlay
       winMessage.style.transition = "opacity 0.6s ease";
       winMessage.style.opacity = "0";
       winMessage.style.pointerEvents = "none";
@@ -212,12 +219,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Wait for fade-out then restart game
       setTimeout(() => {
         winMessage.classList.remove("show");
-        initGame();  // Reset cards, timer, score
+        initGame();
       }, 600);
     });
   }
-});
-
-  listenToLeaderboard();
-  initGame();
 });
