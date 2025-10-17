@@ -144,25 +144,14 @@ button:hover {
 
 /* ------------------ WIN MESSAGE ------------------ */
 #win-message {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  pointer-events: none; /* <- this line prevents click blocking */
   opacity: 0;
-  transition: opacity 0.3s ease;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
 }
 
 #win-message.show {
-  display: flex;
-  pointer-events: all; /* Enable interaction only when visible */
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* ------------------ LEADERBOARD ------------------ */
