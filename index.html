@@ -1,50 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MEMERY GAME</title>
-<link rel="stylesheet" href="memerygame.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memery Game 👻</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="memerygame.css" />
+
+  <!-- Meta Theme -->
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="Memery Game — Flip, match, and climb the MeryCoin leaderboard!" />
 </head>
 
 <body>
-<h1>MEMERY GAME</h1>
+  <div class="container">
+    <header>
+      <h1>👻 Memery Game 👻</h1>
+      <div class="stats">
+        <span>Score: <strong id="score">0</strong></span>
+        <span>Time: <strong id="timer">0</strong>s</span>
+      </div>
+    </header>
 
-<div id="scoreboard">
-  <div>Score: <span id="score">0</span></div>
-  <div>Time: <span id="timer">0</span>s</div>
-</div>
+    <!-- Game Board -->
+    <main>
+      <div id="game" class="game-board"></div>
+    </main>
 
-<div id="game" class="game-board"></div>
-<div class="buttons-container">
-  <button onclick="initGame()">Restart</button>
-  <button onclick="location.href='index.html'">Main Menu</button>
-</div>
+    <!-- Win Message -->
+    <div id="win-message" class="win-message">
+      <div class="win-content">
+        <h2>🎉 You Matched Them All! 🎉</h2>
+        <p id="final-score"></p>
+        <button id="play-again" class="btn">Play Again</button>
+      </div>
+    </div>
 
-<div id="game"></div>
+    <!-- Leaderboard Section -->
+    <section class="leaderboard-section">
+      <h2>🏆 Global Leaderboard</h2>
+      <table id="leaderboard">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+          <!-- Live leaderboard rows appear here -->
+        </tbody>
+      </table>
+    </section>
 
-<div id="win-message" class="overlay">
-  <h2>🎉 You Win! 🎉</h2>
-  <p id="final-score"></p>
-  <button id="play-again">Play Again</button>
-</div>
+    <footer>
+      <p>
+        Built with 💙 by the <strong>MeryCoin</strong> community —
+        <a href="https://memesoncronos.com" target="_blank" rel="noopener noreferrer">memesoncronos.com</a>
+      </p>
+    </footer>
+  </div>
 
-<div id="leaderboard">
-  <h2>🏆 Top Legends 🏆</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Score</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboard-body"></tbody>
-  </table>
-</div>
-
-<!-- Link external JS -->
-<script type="module" src="memerygame.js"></script>
-
+  <!-- JS Game Logic (Firebase + Live Leaderboard) -->
+  <script type="module" src="memerygame.js"></script>
 </body>
 </html>
