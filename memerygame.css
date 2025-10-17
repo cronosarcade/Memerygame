@@ -154,11 +154,21 @@ button:hover {
   pointer-events: auto;
 }
 
-/* ------------------ LEADERBOARD ------------------ */
+/* ------------------ LEADERBOARD CONTAINER ------------------ */
+.leaderboard-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;       /* center horizontally */
+  justify-content: center;   /* optional: center vertically within section */
+  margin-top: 30px;
+  width: 100%;
+}
+
+/* Keep your table styles but center it */
 #leaderboard {
-  margin-top: 20px;
   text-align: center;
   max-width: 300px;
+  width: 100%;
   background: rgba(30, 0, 30, 0.4);
   border-radius: 10px;
   padding: 10px;
