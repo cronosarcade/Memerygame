@@ -5,12 +5,12 @@ import {
   query, orderBy, limit, onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-// Your Firebase config
+// ------------------ FIREBASE CONFIG ------------------
 const firebaseConfig = {
   apiKey: "AIzaSyD-YvTCquhpbl6j1TwTsDz5hnMPnyU3ukI",
   authDomain: "memery-game-4f732.firebaseapp.com",
   projectId: "memery-game-4f732",
-  storageBucket: "memery-game-4f732.appspot.com",  // Note: changed to .appspot.com
+  storageBucket: "memery-game-4f732.appspot.com",
   messagingSenderId: "957328543425",
   appId: "1:957328543425:web:d48bc4323bd309e0858e40",
   measurementId: "G-LXMZ5FHV05"
@@ -20,7 +20,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Game state variables
+// ------------------ GAME STATE ------------------
 const imageUrls = [
   "https://ipfs.ebisusbay.com/ipfs/QmZBWAGEPVydd3WKJKJvdesKjMC85Hf1Yod4VJCBvydW1R",
   "https://ipfs.ebisusbay.com/ipfs/QmSxg9ACBP4EEyda5QbU4usJYxRVDHj8GZQokcwUd8CnNt",
@@ -43,19 +43,21 @@ let timerInterval;
 
 const flipSound = new Audio("content");
 
-// Sound play (same as yours)
+// ------------------ SOUND EFFECT ------------------
 function playFlipSound() {
   const sound = flipSound.cloneNode();
   sound.volume = 0.4;
   sound.play().catch(() => {});
 }
 
-// Game initialization
+// ------------------ INITIALIZE GAME ------------------
 function initGame() {
   const game = document.getElementById("game");
   const win = document.getElementById("win-message");
   game.innerHTML = "";
   win.classList.remove("show");
+  win.style.opacity = "0";
+  win.style.pointerEvents = "none";
 
   flippedCards = [];
   matchedCount = 0;
@@ -98,7 +100,7 @@ function initGame() {
   });
 }
 
-// Flipping & matching
+// ------------------ CARD FLIP LOGIC ------------------
 function flipCard(card) {
   if (lockBoard || card.classList.contains("flipped")) return;
   card.classList.add("flipped");
@@ -130,7 +132,7 @@ function checkMatch() {
   lockBoard = false;
 }
 
-// Generate random name if user doesn't choose
+// ------------------ RANDOM NAME GENERATOR ------------------
 function generateRandomName() {
   const prefixes = ["Ghost", "Cro", "Anon", "Mery", "Legend"];
   const suffix = Math.floor(1000 + Math.random() * 9000);
@@ -138,13 +140,16 @@ function generateRandomName() {
   return `${prefix}_${suffix}`;
 }
 
-// Show win screen & prompt for name
+// ------------------ WIN MESSAGE ------------------
 function showWinMessage() {
   clearInterval(timerInterval);
   const win = document.getElementById("win-message");
   const finalScore = document.getElementById("final-score");
-  win.classList.add("show");
   finalScore.textContent = `Final Score: ${score} | Time: ${time}s`;
+
+  win.classList.add("show");
+  win.style.opacity = "1";
+  win.style.pointerEvents = "auto";
 
   setTimeout(async () => {
     const playerName = prompt("Enter your name for the leaderboard:") || generateRandomName();
@@ -152,7 +157,7 @@ function showWinMessage() {
   }, 1000);
 }
 
-// Save score to Firestore
+// ------------------ FIRESTORE SAVE ------------------
 async function saveScore(player, scoreVal, timeVal) {
   try {
     await addDoc(collection(db, "memeryLeaderboard"), {
@@ -161,14 +166,13 @@ async function saveScore(player, scoreVal, timeVal) {
       time: Number(timeVal),
       date: new Date()
     });
-    // No alert here if you prefer, we rely on live update
   } catch (e) {
     console.error("Error saving score:", e);
     alert("Could not save score — check console.");
   }
 }
 
-// Listen for live leaderboard updates
+// ------------------ LIVE LEADERBOARD ------------------
 function listenToLeaderboard() {
   const q = query(
     collection(db, "memeryLeaderboard"),
@@ -193,9 +197,25 @@ function listenToLeaderboard() {
   });
 }
 
-// On page load, start listening + initialize game
-window.addEventListener("DOMContentLoaded", () => {
+// ------------------ PLAY AGAIN BUTTON FIX 👻 ------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const playAgainBtn = document.getElementById("play-again");
+  const winMessage = document.getElementById("win-message");
+
+  if (playAgainBtn && winMessage) {
+    playAgainBtn.addEventListener("click", () => {
+      // 👻 Add ghost fade-out animation
+      winMessage.style.transition = "opacity 0.6s ease";
+      winMessage.style.opacity = "0";
+      winMessage.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        winMessage.classList.remove("show");
+        initGame();
+      }, 600);
+    });
+  }
+
   listenToLeaderboard();
   initGame();
-  // Optionally you could load once too, but listen handles it
 });
