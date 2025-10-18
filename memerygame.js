@@ -16,13 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let timerInterval;
   let matchedCount = 0;
 
-  const frontImage = "https://www.memesoncro.com/wp-content/uploads/2024/02/memery-card-front.png";
+  const frontImage = "https://www.memesoncronos.com/datas/tokens/312o22102n1m8jehsayq3z5wv.webp";
   const imageUrls = [
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/1.png",
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/2.png",
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/3.png",
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/4.png",
-    "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/5.png",
+    "https.gif",
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/6.png",
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/7.png",
     "https://ipfs.io/ipfs/QmZc5Wf5fKVm2J43Vf2i2LdG2J4i2J43Vf2i2LdG2J4i2J/8.png"
